@@ -1,0 +1,26 @@
+Para una pila: Pila(stack) LIFO
+                    Ordenado        Desordenado     Funcionalidad
+pila.push(e);       O(logN)         O(1)            Inserta un valor
+pila.top();         O(1)            O(N)            Muestra el último insertado
+pila.pop()          O(logN)         O(N)            Elimina el úlitmo insertado
+
+Para una cola: queue (FIFO)
+cola.push(e)    Inserta valor
+pila.front()    Muestra el primer insertado
+pila.pop()      Elimina el primer insertado
+
+Propiedades de árboles:
+- Un árbol  binario completo de altura h>= 1 tiene 2^(i-1) nodos en el nivel i,
+para todo i entre 1 y h.
+- Un árbol binario completo de altura h>=1 tiene 2^(h-1) hojas.
+- Un árbol binario completo de altura h >= 0 tiene 2^(h-1) nodos.
+- La altura de un árbol binario semicompleto formado por n nodos es [log(n)] + 1
+
+
+
+Grafos.h
+Grafo(int V)                    Crea un Grafo   0...V-1
+void ponArista(int v, int w)    Pon arista entre v y w
+Adys ady(int v) const           Consultar los adyacentes de v // Adys vector<int>; // vector<Adys> _ady;
+int V() const                   Consultar el número de vértices
+int A() const                   Consultar el número de aristas

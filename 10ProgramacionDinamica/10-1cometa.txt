@@ -1,0 +1,172 @@
+
+/*@ <answer>
+ *
+ * Nombre y Apellidos:
+ *
+ *@ </answer> */
+
+#include <fstream>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+#include <algorithm>
+
+#include "EnterosInf.h"
+#include "Matriz.h"  // propios o los de las estructuras de datos de clase
+/*@ <answer>
+
+ Escribe aquí un comentario general sobre la solución, explicando cómo
+ se resuelve el problema y cuál es el coste de la solución, en función
+ del tamaño del problema.
+
+ @ </answer> */
+
+// ================================================================
+// Escribe el código completo de tu solución aquí debajo
+// ================================================================
+//@ <answer>
+/*
+ENTRADA
+4 50
+10 25
+20 15
+30 40
+40 75
+3 10
+1 30
+2 60
+3 90
+3 2
+1 10
+1 10
+1 10
+
+
+
+SALIDA
+SI 2 2 55
+NO
+SI 3 2 20
+
+// nº de formas de conseguir la cuerda, min cuerdas, min coste necesario
+
+*/
+
+struct tCuerda {
+    int largo;
+    int costo;
+    bool usada;
+};
+
+struct tSol {
+    int num_soluciones;
+    EntInf costo;
+    EntInf num_cuerdas;
+};
+
+
+
+struct tCasilla {
+    EntInf num_cuerdas;
+    int largo_act;
+    EntInf costo;
+    int maneras;
+    vector<bool> cuerdas_usadas;
+};
+
+bool operator<(tCasilla c1, tCasilla c2) {
+    return c1.num_cuerdas < c2.num_cuerdas;
+}
+
+bool operator<(tCuerda c1, tCuerda c2) {
+    return c1.largo < c2.largo;
+}
+
+
+tSol solucionar(int N, int L, vector<tCuerda>& cuerdas) {
+    tSol sol = {0, Infinito, Infinito};
+    vector<int> maneras(L, 0);  // cuenta las maneras de llegar a las casillas
+    // las filas(i) son las cuerdas: N + 1 ya que se tiene que comparar con la primera fila que son todo
+    // infinitos
+    // las columnas(j) es la longitud: L + 1 ya que empieza de 0...L. A L es a donde queremos llegar
+    sort(cuerdas.begin(), cuerdas.end());
+    int n = cuerdas.size();
+    Matriz<tCasilla> matriz_min_cuerdas(n + 1, L + 1, {Infinito, 0, 0, 0, vector<bool>(cuerdas.size(), false)});
+    matriz_min_cuerdas[0][0].num_cuerdas = 0;
+
+    for (int i = 1; i <= n; i++) {
+        matriz_min_cuerdas[i][0].num_cuerdas = 0;
+        for (int j = 1; j <= L; j++) {
+            if (cuerdas[i - 1].largo > j || matriz_min_cuerdas[i][j - cuerdas[i - 1].largo].cuerdas_usadas[i - 1]) {
+                matriz_min_cuerdas[i][j] = matriz_min_cuerdas[i - 1][j];
+            } else {
+                tCasilla aux = matriz_min_cuerdas[i][j - cuerdas[i - 1].largo];
+                aux.num_cuerdas = aux.num_cuerdas + 1;
+                aux.cuerdas_usadas[i - 1] = true;
+                aux.largo_act += cuerdas[i - 1].largo;
+                aux.costo = aux.costo + cuerdas[i - 1].costo;
+                matriz_min_cuerdas[i][j] = min(matriz_min_cuerdas[i - 1][j], aux);
+                if(aux.largo_act == matriz_min_cuerdas[i-1][j].largo_act){
+                    matriz_min_cuerdas[i][j].maneras = aux.maneras + matriz_min_cuerdas[i - 1][j].maneras;
+                }
+                if (j == L && matriz_min_cuerdas[i][j].largo_act == L /* && matriz_min_cuerdas[i][j].cuerdas_usadas[i - 1]*/) {
+                    sol.num_cuerdas = min(sol.num_cuerdas, matriz_min_cuerdas[i][j].num_cuerdas);
+                    sol.costo = min(sol.costo, matriz_min_cuerdas[i][j].costo);
+                    sol.num_soluciones++;
+                }
+            }
+        }
+    }
+
+    return sol;
+}
+
+
+bool resuelveCaso() {
+    // leer los datos de la entrada
+    int N, L;
+
+    cin >> N >> L;
+    vector<tCuerda> cuerdas(N);
+    for (int i = 0; i < N; i++) {
+        int a, b;
+        cin >> a >> b;
+        cuerdas[i] = {a, b, false};
+    }
+
+    if (!std::cin) {
+        return false;
+    }  // fin de la entrada
+
+    // resolver el caso posiblemente llamando a otras funciones
+    tSol sol = solucionar(N, L, cuerdas);
+    if (sol.num_soluciones == 0) {
+        cout << "NO\n";
+    } else {
+        cout << "SI " << sol.num_soluciones << " " << sol.num_cuerdas << " " << sol.costo << "\n";
+    }
+    // escribir la solución
+
+    return true;
+}
+
+//@ </answer>
+//  Lo que se escriba dejado de esta línea ya no forma parte de la solución.
+
+int main() {
+    // ajustes para que cin extraiga directamente de un fichero
+#ifndef DOMJUDGE
+    std::ifstream in("casos.txt");
+    auto cinbuf = std::cin.rdbuf(in.rdbuf());
+#endif
+
+    while (resuelveCaso());
+
+    // para dejar todo como estaba al principio
+#ifndef DOMJUDGE
+    std::cin.rdbuf(cinbuf);
+    system("PAUSE");
+#endif
+    return 0;
+}

@@ -1,0 +1,8 @@
+NUmero de casos:
+- empieza con N numero de casos
+
+- Centinela:
+- termina cuando N = 0 por ejemplo
+
+- Ilimitados:
+si no recibe un cin termina

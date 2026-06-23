@@ -1,0 +1,163 @@
+
+/*@ <answer>
+ *
+ * Nombre y Apellidos:
+ *
+ *@ </answer> */
+
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+#include "Matriz.h"  // propios o los de las estructuras de datos de clase
+
+/*@ <answer>
+
+ Escribe aquí un comentario general sobre la solución, explicando cómo
+ se resuelve el problema y cuál es el coste de la solución, en función
+ del tamaño del problema.
+
+ @ </answer> */
+
+// ================================================================
+// Escribe el código completo de tu solución aquí debajo
+// ================================================================
+//@ <answer>
+
+/*
+
+
+ENTRADA
+3
+1 11:00 90
+1 12:30 90
+1 12:45 60
+3
+1 11:00 90
+1 12:45 60
+1 11:00 180
+2
+2 12:00 80
+1 20:00 80
+0
+
+
+SALIDA
+150
+180
+160
+
+*/
+struct tPeli {
+    int ini;
+    int fin;
+    int sol;
+};
+
+bool operator<(tPeli p1, tPeli p2) {
+    return p1.fin < p2.fin;
+}
+
+// peli(i) = max(peli(i+1), peli(i+1) + duracion)
+
+int maxPelis(vector<tPeli>& pelis, int i, int fin) {
+    if (i >= pelis.size()) {
+        return 0;
+    }
+    if (fin + 10 > pelis[i].ini) {
+        // pelis[i].sol = pelis[i + 1].sol;
+        pelis[i].sol = maxPelis(pelis, i + 1, fin);
+        return pelis[i].sol;
+    } else {
+        int duracion = pelis[i].fin - pelis[i].ini;
+        pelis[i].sol = max(maxPelis(pelis, i + 1, pelis[i].fin) + duracion, pelis[i + 1].sol);
+        cout << "pelis[ " << i << " ] = " << pelis[i].sol << endl;
+        return pelis[i].sol;
+    }
+}
+
+/*
+int maxPelis(vector<tPeli>& pelis, int i, int fin) {
+    if (i >= pelis.size()) {
+        cout << "i = " << i << " y pelis.size() = " << pelis.size() << endl;
+        cout << "pelise[i-1].sol = " << pelis[i - 1].sol << endl;
+        return 0;
+    }
+    if (fin + 10 > pelis[i].ini) {
+        pelis[i].sol = pelis[i - 1].sol;
+        return maxPelis(pelis, i + 1, fin);
+    } else {
+        int duracion = pelis[i].fin - pelis[i].ini;
+        // if(i == P) cout<< "Es el ultimo la duracion\n";
+        // if (i = pelis.size() - 1) cout << "Soy ulti y soy el numero pelis[" << i << "] = " << duracion << "\n";
+        int sol = max(pelis[i - 1].sol, maxPelis(pelis, i + 1, pelis[i].fin) + duracion);
+        pelis[i].sol = sol;
+        return sol;
+    }
+}*/
+
+/*
+int maxPelis(int P, vector<tPeli>& pelis, int i, int fin, vector<int>& sol) {
+    if (i >= P) return 0;
+    if (fin + 10 > pelis[i].ini) {
+        return maxPelis(P, pelis, i + 1, fin, sol);
+    } else {
+        int duracion = pelis[i].fin - pelis[i].ini;
+        sol[i + 1] = max(sol[i], maxPelis(P, pelis, i + 1, pelis[i].fin, sol) + duracion);
+        return sol[i + 1];
+    }
+}*/
+
+bool resuelveCaso() {
+    // leer los datos de la entrada
+    int P;
+    cin >> P;
+
+    if (P == 0) {
+        return false;
+    }
+    // resolver el caso posiblemente llamando a otras funciones
+    vector<tPeli> pelis(P + 1);
+    pelis[0] = {10, 0, 0};  // el 10 es por poner algo que no sea 0
+    for (int i = 1; i < P + 1; i++) {
+        int dia, h, min, dur;
+        char aux;
+        cin >> dia >> h >> aux >> min >> dur;
+        dia = (dia - 1) * 60 * 24;
+        pelis[i] = {dia + h * 60 + min,
+                    dia + h * 60 + min + dur, dur};
+    }
+
+    // escribir la solución
+    sort(pelis.begin(), pelis.end());
+    vector<int> sol(P + 1);
+    sol[0] = 0;
+
+    cout << maxPelis(pelis, 1, 0) << "\n";
+
+    // cout << maxPelis(P, pelis, 0, 0, sol) << "\n";
+
+    return true;
+}
+
+//@ </answer>
+//  Lo que se escriba dejado de esta línea ya no forma parte de la solución.
+
+int main() {
+    // ajustes para que cin extraiga directamente de un fichero
+#ifndef DOMJUDGE
+    std::ifstream in("casos.txt");
+    auto cinbuf = std::cin.rdbuf(in.rdbuf());
+#endif
+
+    while (resuelveCaso());
+
+    // para dejar todo como estaba al principio
+#ifndef DOMJUDGE
+    std::cin.rdbuf(cinbuf);
+    system("PAUSE");
+#endif
+    return 0;
+}
