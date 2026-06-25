@@ -3,7 +3,7 @@
 - Resolución de problemas algorítmicos complejos aplicando diversos paradigmas de programación: Divide y Vencerás, Algoritmos Voraces (Greedy) y Programación Dinámica.
 -  desde cero y optimización de estructuras de datos avanzadas, incluyendo Árboles AVL y Colas de Prioridad basadas en Montículos (Heaps).
 - Modelado de sistemas mediante Grafos (simples, dirigidos y valorados) y aplicación de algoritmos clásicos de caminos mínimos y árboles de recubrimiento (Dijkstra, Floyd).
-- Fundamentos de algoritmia: [https://github.com/lucarco/Fundamentos_De_Algoritmia]
+- Fundamentos de algoritmia: [https://github.com/lucarco/FAL]
 
 
 Ejercicios de este repositorio divididos en:
